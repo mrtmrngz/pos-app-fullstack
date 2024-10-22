@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+
+    body {
+        font-family: "Open Sans", sans-serif;
+        background: #FAFAFA;
+        @apply text-text-color;
+    }
+
+    h1 {
+        @apply font-semibold text-2xl ;
+    }
+
+    input, textarea{
+        @apply border border-border-color focus:outline-none focus:border-text-color h-9 p-2 pl-2;
+    }
+
+    input {
+        @apply text-sm;
+    }
+
+    textarea {
+        @apply resize-none;
+    }
+
+    button {
+        @apply cursor-pointer;
+
+        &.btn {
+            @apply mx-10 h-10 px-5 w-max duration-300 hover:opacity-80 ;
+
+            &.danger {
+                @apply bg-danger text-white;
+            }
+
+            &.primary {
+                @apply bg-primary text-white;
+            }
+
+            &.secondary {
+                @apply bg-secondary text-white;
+            }
+
+            &.small {
+                @apply h-7 px-3;
+            }
+
+            &.large {
+                @apply h-12 px-7;
+            }
+        }
+    }
+    
+    .header-right-link a {
+
+        @apply transition-all;
+
+        &:hover {
+            @apply text-primary ;
+        }
+
+        &.active {
+            @apply text-primary ;
+        }
+    }
+
+    .slider-swipe-buttons {
+        @apply h-8 w-8 flex items-center justify-center bg-soft-gray rounded-full border border-transparent hover:border-black absolute top-1/2 transform -translate-y-[80%] z-[500] transition-all duration-300 cursor-pointer;
+
+        &:hover {
+            box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+        }
+    }
+
+    .category-item:hover .category-img {
+        @apply border-orange-color duration-500;
+        box-shadow: 0px 0px 5px 3px rgba(0,0,0,0.4);
+    }
+
+    .category-item.active .category-img {
+        @apply border-orange-color;
+        box-shadow: 0px 0px 5px 3px rgba(0,0,0,0.4);
+    }
+
+    .category-item:hover .category-icon {
+        @apply border-orange-color duration-500;
+        box-shadow: 0px 0px 5px 3px rgba(0,0,0,0.4);
+    }
+
+    .product-item:hover {
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    }
+
+    /* Tables START */
+
+    .custom-table {
+        & > thead > tr > th {
+            @apply p-4 bg-[#eaeaea] border border-border-color text-sm font-bold text-left;
+        }
+
+        & > tbody > tr {
+            @apply hover:bg-[#eaeaea];
+
+            & > td {
+                @apply p-4 border border-border-color border-l-0 text-sm;
+
+                &:last-child {
+                    @apply border-r-0;
+                }
+            }
+        }
+    }
+
+    .bill-print-table {
+        thead > tr > th {
+            @apply bg-transparent border-t-0 border-l-0 border-r-0 p-0 py-5 pr-5;
+
+            &:last-child {
+                @apply pr-0;
+            }
+
+            &.bill-price, &.bill-quantity {
+                @apply text-center;
+            }
+
+            &.bill-image {
+                @apply h-[unset];
+            }
+        }
+
+    }
+
+    .bill-print-table {
+        & > tbody > tr {
+            @apply hover:bg-transparent border-0 border-b;
+
+            & > td {
+                @apply p-0 pr-4 py-4 border-b-0 border-r-0 border-0;
+
+                &:last-child {
+                    @apply pr-0;
+                }
+
+                &.bill-price, &.bill-quantity {
+                    @apply text-center;
+                }
+
+                &.bill-total {
+                    @apply font-semibold;
+                }
+            }
+        }
+
+        .bill-total {
+            @apply text-right;
+        }
+    }
+
+    /* Tables END */
+
+
+    /*! Modal START  */
+
+    .backdrop {
+        /*visibility: hidden;*/
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease;
+        /*animation: open-modal 300ms ease forwards;*/
+
+        &.active {
+            /*visibility: visible;*/
+            opacity: 1;
+            pointer-events: auto;
+        }
+    }
+
+    .modal-wrapper {
+        @apply z-[700] fixed inset-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[500px] md:w-[600px] lg:w-1/2 2xl:w-[900px] h-max bg-white rounded-xl;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease;
+
+        &.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        &.edit-category-modal {
+            height: 100%;
+        }
+    }
+
+    .modal-wrapper.print-bill-modal {
+        @apply sm:max-h-[600px] h-full;
+    }
+
+    /*! Modal END  */
+
+}
