@@ -52,7 +52,8 @@ exports.login = async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: true,
-            maxAge: age
+            maxAge: age,
+            sameSite: "None"
         }).status(200).json({
             _id: user._id,
             email: user.email
