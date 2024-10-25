@@ -9,7 +9,7 @@ exports.verifyToken = async (req, res, next) => {
         jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, payload) => {
             if(err) return res.status(401).json({message: "Token is not valid"})
 
-            req.userId = payload._id
+            req.userId = payload.id
 
             next()
 
