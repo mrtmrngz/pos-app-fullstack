@@ -34,6 +34,11 @@
         &.btn {
             @apply mx-10 h-10 px-5 w-max duration-300 hover:opacity-80 ;
 
+            &:disabled {
+                opacity: 0.6;
+                cursor: no-drop;
+            }
+
             &.danger {
                 @apply bg-danger text-white;
             }

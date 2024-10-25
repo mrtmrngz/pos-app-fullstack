@@ -4,11 +4,14 @@ import Cart from "../components/Cart/Cart.jsx";
 import {useEffect, useState} from "react";
 import Modal from "../components/Portals/Modal.jsx";
 import AddProductModal from "../components/Modals/AddProductModal.jsx";
+import {useCart, useCategory, useProduct} from "../Context/index.js";
+import Spinner from "../components/UI/Spinner.jsx";
 
 const HomePage = () => {
 
     const [isRow, setIsRow] = useState(false)
-
+    const {categoryLoading} = useCategory()
+    const {productLoading} = useProduct()
 
     const handleResize = () => {
         if(window.innerWidth < 1024) {
@@ -26,6 +29,9 @@ const HomePage = () => {
         return () => window.removeEventListener('resize', handleResize)
     }, [])
 
+    if(categoryLoading || productLoading) {
+        return <Spinner />
+    }
 
     return (
         <div

@@ -12,6 +12,7 @@ const AddUpdateCategory = ({handleSubmit, editingCategory, isEditing=false}) => 
 
     const formInitialValues = {
         title: editingCategory ? editingCategory.title : "",
+        color: editingCategory ? editingCategory.color : "",
         imageUrl: editingCategory ? editingCategory.imageUrl : ""
     }
 

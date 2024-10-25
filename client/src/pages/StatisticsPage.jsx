@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Container from "../components/UI/Container.jsx";
 import {
     Area,
@@ -14,73 +14,71 @@ import {
 } from "recharts";
 import { MdPointOfSale, MdSupervisedUserCircle  } from "react-icons/md";
 import { FaMoneyBillWave, FaBoxes, FaStar  } from "react-icons/fa";
+import apiRequest from "../libs/apiRequest.js";
+import Spinner from "../components/UI/Spinner.jsx";
+import priceFormat from "../libs/priceFormat.js";
 
 
 const StatisticsPage = () => {
 
+    const [bills, setBills] = useState([])
+    const [billItems, setBillItems] = useState([])
+    const [loading, setLoading] = useState(false)
+    const totalIncome = bills.reduce((total, item) => total + item.totalAmount, 0)
+    const totalProductSold = billItems.reduce((total, item) => total + item.quantity, 0)
+    const mostSoldProduct = billItems.length > 0
+        ? billItems.reduce((max, product) => product.quantity > max.quantity ? product : max)
+        : null;
+    const statsData = bills.reduce((acc, bill) => {
+        const datePart = bill.date.substring(0, 10);
+        const [year, month] = datePart.split("-");
 
-    const data2 = [
-        {
-            name: "Ocak",
-            satisMiktari: 12,
-            toplamKazanc: 3700
-        },
-        {
-            name: "Şubat",
-            satisMiktari: 120,
-            toplamKazanc: 37000
-        },
-        {
-            name: "Mart",
-            satisMiktari: 18,
-            toplamKazanc: 3800
-        },
-        {
-            name: "Nisan",
-            satisMiktari: 6700,
-            toplamKazanc: 375000
-        },
-        {
-            name: "Mayıs",
-            satisMiktari: 120,
-            toplamKazanc: 37000
-        },
-        {
-            name: "Haziran",
-            satisMiktari: 3500,
-            toplamKazanc: 852000
-        },
-        {
-            name: "Temmuz",
-            satisMiktari: 550,
-            toplamKazanc: 82500
-        },
-        {
-            name: "Ağustos",
-            satisMiktari: 620,
-            toplamKazanc: 255000
-        },
-        {
-            name: "Eylül",
-            satisMiktari: 6200,
-            toplamKazanc: 25500
-        },
-        {
-            name: "Ekim",
-            satisMiktari: 620,
-            toplamKazanc: 255000
-        },
-        {
-            name: "Kasım",
-            satisMiktari: 620,
-            toplamKazanc: 255000
-        },
-        {
-            name: "Aralık",
-            satisMiktari: 620,
-            toplamKazanc: 255000
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        const longMonth = monthNames[parseInt(month, 10) - 1];
+
+        if(!acc[longMonth]) {
+            acc[longMonth] = {
+                name: longMonth,
+                satisMiktari: 0,
+                toplamKazanc: 0
+            }
         }
-    ]
+
+        const monthlySales = billItems.reduce((total, item) => total + item.quantity, 0);
+        const monthlyIncome = billItems.reduce((total, item) => total + (item.quantity * item.price), 0);
+
+        acc[longMonth].satisMiktari += monthlySales
+        acc[longMonth].toplamKazanc += monthlyIncome
+        return acc
+    }, {})
+
+    const statsArray = Object.values(statsData)
+
+
+    useEffect(() => {
+        const fetchBills = async () => {
+            setLoading(true)
+            try {
+                const res = await apiRequest.get('/bills')
+                setBills(res.data)
+                setBillItems(res.data.flatMap(item => {
+                    return item.cartItems
+                }))
+            }catch (err) {
+                console.log(err)
+            }finally {
+                setLoading(false)
+            }
+        }
+        fetchBills()
+    }, [])
+
+    if(loading) {
+        return <Spinner />
+    }
 
     return (
         <div className="statics mt-7 overflow-auto pb-24 md:pb-5">
@@ -95,7 +93,7 @@ const StatisticsPage = () => {
                                 <h3>Total Sales</h3>
                             </div>
                             <div className="desc font-semibold text-center text-3xl md:text-2xl 2xl:text-3xl">
-                                <h2>35</h2>
+                                <h2>{bills.length}</h2>
                             </div>
                         </div>
                         <div className="border border-border-color rounded-xl p-5 flex flex-col gap-y-3">
@@ -105,7 +103,7 @@ const StatisticsPage = () => {
                                 <h3>Total Products Sold</h3>
                             </div>
                             <div className="desc font-semibold text-center text-3xl md:text-2xl 2xl:text-3xl">
-                                <h2>22</h2>
+                                <h2>{totalProductSold}</h2>
                             </div>
                         </div>
                         <div className="border border-border-color rounded-xl p-5 flex flex-col gap-y-3">
@@ -115,7 +113,7 @@ const StatisticsPage = () => {
                                 <h3>Total Income</h3>
                             </div>
                             <div className="desc font-semibold text-center text-3xl md:text-2xl 2xl:text-3xl">
-                                <h2>$625.000</h2>
+                                <h2>{priceFormat(totalIncome)}</h2>
                             </div>
                         </div>
                         <div className="border border-border-color rounded-xl p-5 flex flex-col gap-y-3">
@@ -125,7 +123,7 @@ const StatisticsPage = () => {
                                 <h3>Best Sellings Product</h3>
                             </div>
                             <div className="desc font-semibold text-center text-3xl md:text-2xl 2xl:text-3xl">
-                                <h2>$625.000</h2>
+                                <h2>{mostSoldProduct?.title}</h2>
                             </div>
                         </div>
                     </div>
@@ -134,7 +132,7 @@ const StatisticsPage = () => {
                         <div className="h-[300px] overflow-x-auto">
                             <ResponsiveContainer width="100%" minWidth={768}>
                                 <BarChart
-                                    data={data2}
+                                    data={statsArray}
                                     margin={{
                                         top: 5,
                                         right: 30,

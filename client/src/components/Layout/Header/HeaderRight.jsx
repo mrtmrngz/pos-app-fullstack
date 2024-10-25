@@ -1,14 +1,18 @@
-import {Link, useLocation} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import { IoMdHome, IoMdPerson  } from "react-icons/io";
 import { LiaNewspaperSolid } from "react-icons/lia";
 import { FaSignOutAlt, FaShoppingCart  } from "react-icons/fa";
 import {AiOutlineUser} from "react-icons/ai";
 import { IoMdStats } from "react-icons/io";
-
+import {useState} from "react";
+import {useAuth} from "../../../Context/index.js";
+import apiRequest from "../../../libs/apiRequest.js";
 
 
 const HeaderRight = () => {
 
+    const navigate = useNavigate()
+    const {updateUser} = useAuth()
     const {pathname} = useLocation()
     const number = 50
 
@@ -30,10 +34,23 @@ const HeaderRight = () => {
         },
         {
             label: "Sign Out",
-            url: "/login",
+            url: "",
             icon: <FaSignOutAlt size={28} />
         }
     ]
+
+    const handleLogout = async () => {
+        try {
+            await apiRequest.post('/auth/logout')
+
+            updateUser(null)
+
+            navigate("/")
+
+        }catch (err) {
+            console.log(err)
+        }
+    }
 
     return (
         <div className="header-right">
@@ -42,9 +59,9 @@ const HeaderRight = () => {
 
                 {links.map((link, index) => (
                     <div key={index}
-                         className={`header-right-link cursor-pointer ${link.url === "/cart" && "hidden md:flex"} ${link.badge && "badge-link relative"}`}>
+                         className={`header-right-link cursor-pointer ${link.url === "/cart" && "hidden md:flex"} ${link.badge && "badge-link relative"}`} onClick={() => link.label === "Sign Out" && handleLogout()}>
                         <Link to={link.url}
-                              className={`flex flex-col items-center gap-y-0.5 ${link.url === "/login" && "text-red-600"} ${link.url === pathname && "active"}`}>
+                              className={`flex flex-col items-center gap-y-0.5 ${link.label === "Sign Out" && "text-red-600"} ${link.url === pathname && "active"}`}>
                             {link.icon}
                             <span className="sm:text-xs text-[10px]">{link.label}</span>
                             {(link.badge && link.number > 0) && <span

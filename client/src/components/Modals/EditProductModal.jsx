@@ -3,13 +3,15 @@ import Modal from "../Portals/Modal.jsx";
 import AddUpdateProductForm from "../Form/AddUpdateProductForm.jsx";
 import {useCategory, useProduct} from "../../Context/index.js";
 import CustomTable from "../CustomTable/CustomTable.jsx";
+import priceFormat from "../../libs/priceFormat.js";
+import apiRequest from "../../libs/apiRequest.js";
 
 const EditProductModal = ({onOpen, onClose, setIsEditModalOpen}) => {
 
     const [isEditOpen, setIsEditOpen] = useState(false)
     const [editingProduct, setEditingProduct] = useState(null)
 
-    const {products} = useProduct()
+    const {products, productDispatch} = useProduct()
     const {categories} = useCategory()
 
     const columns = [
@@ -19,7 +21,13 @@ const EditProductModal = ({onOpen, onClose, setIsEditModalOpen}) => {
             className: "product-image h-[80px]",
             width: "100px",
             render: (item) => {
-                return <img src={item.imageUrl} className="w-full h-full object-cover" alt={item.title} />
+                if(item?.imageUrl !== "") {
+                    return <img src={item.imageUrl} className="w-full h-full object-cover" alt={item.title} />
+                }else if(item?.imageUrl === "" && item?.color !== "") {
+                    return <div className="w-full h-full flex items-center justify-center" style={{background: `#${item?.color}`}}>
+                        <span className="text-white text-center text-[9px]">{item?.title}</span>
+                    </div>
+                }
             }
         },
         {
@@ -28,7 +36,7 @@ const EditProductModal = ({onOpen, onClose, setIsEditModalOpen}) => {
             className: "product-title",
             width: "400px",
             render: (item) => {
-                return <strong>{item.title}</strong>
+                return <strong className="capitalize">{item.title}</strong>
             }
         },
         {
@@ -37,7 +45,7 @@ const EditProductModal = ({onOpen, onClose, setIsEditModalOpen}) => {
             className: "product-price",
             width: "100px",
             render: (item) => {
-                return item.price
+                return priceFormat(item?.price)
             }
         },
         {
@@ -46,8 +54,8 @@ const EditProductModal = ({onOpen, onClose, setIsEditModalOpen}) => {
             className: "product-category",
             width: "300px",
             render: (item) => {
-                const productCategory = categories.find(cat => cat.id == item.categoryId)
-                return productCategory.title
+                const productCategory = categories.find(cat => cat._id == item.categoryId)
+                return productCategory?.title
             }
         },
         {
@@ -64,26 +72,50 @@ const EditProductModal = ({onOpen, onClose, setIsEditModalOpen}) => {
                         }}
                                 className="text-primary text-sm font-normal">Edit
                         </button>
-                        <button className="text-danger text-sm font-normal">Delete</button>
+                        <button onClick={() => handleDelete(item)} className="text-danger text-sm font-normal">Delete</button>
                     </div>
                 )
             }
         }
     ]
 
-    const handleSubmit = (values, actions) => {
-        console.log(values)
-        setIsEditOpen(false)
-        setEditingProduct(null)
-        actions.resetForm()
+    const handleSubmit = async (values, actions) => {
+        try {
+            const res = await apiRequest.put(`/products/${editingProduct._id}`, {
+                ...values,
+                price: parseInt(values.price)
+            })
+            productDispatch({
+                type: "UPDATE_PRODUCT",
+                payload: res.data
+            })
+            setIsEditOpen(false)
+            setEditingProduct(null)
+        }catch (err) {
+            console.log(err)
+        }
     }
 
+    const handleDelete = async (product) => {
+        try{
+            if(confirm("Are you sure you want to delete the product?")) {
+                await apiRequest.delete(`/products/${product._id}`)
+                productDispatch({
+                    type: "DELETE_PRODUCT",
+                    id: product._id
+                })
+            }
+
+        }catch (err) {
+            console.log(err)
+        }
+    }
 
     return (
         <>
             <Modal title="Edit/Delete Products" onOpen={onOpen} onClose={onClose}>
                 <div className="overflow-x-auto">
-                    <CustomTable tableKey="id" tableClass="product-table" data={products} columns={columns}/>
+                    <CustomTable tableKey="_id" tableClass="product-table" data={products} columns={columns}/>
                 </div>
             </Modal>
 

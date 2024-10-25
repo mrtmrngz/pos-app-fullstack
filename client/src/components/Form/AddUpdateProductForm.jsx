@@ -23,7 +23,7 @@ const AddUpdateProductForm = ({handleSubmit, editingProduct, isEdit=false}) => {
 
     const selectInputData = categories.map(cat => {
         return {
-            key: cat.id,
+            key: cat._id,
             value: cat.title
         }
     })

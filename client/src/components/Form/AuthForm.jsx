@@ -1,10 +1,10 @@
+import {memo} from 'react'
 import {Form, Formik} from "formik";
 import CustomInput from "./CustomInput.jsx";
 import {Link} from "react-router-dom";
 import Button from "../UI/Button.jsx";
 
-const AuthForm = ({type="register", handleSubmit, formInitialValues, validationSchema}) => {
-
+const AuthForm = ({type="register", handleSubmit, formInitialValues, validationSchema, loading}) => {
 
     return (
         <Formik
@@ -28,7 +28,7 @@ const AuthForm = ({type="register", handleSubmit, formInitialValues, validationS
                         <CustomInput label="Password Verification" name="passwordAgain" type="password" htmlFor="passwordAgain" id="passwordAgain" placeholder="Enter Your Password Again" />
                     )}
 
-                    <Button htmlType="submit" type="primary" className="!w-full !m-0 !my-2">
+                    <Button disabled={loading} htmlType="submit" type="primary" className="!w-full !m-0 !my-2">
                         {type !== "register" ? "Login" : "Sign Up"}
                     </Button>
 
@@ -44,4 +44,4 @@ const AuthForm = ({type="register", handleSubmit, formInitialValues, validationS
     );
 };
 
-export default AuthForm;
+export default memo(AuthForm);

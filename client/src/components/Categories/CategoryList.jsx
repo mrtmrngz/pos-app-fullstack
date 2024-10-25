@@ -5,7 +5,7 @@ import CategoryItem from "./CategoryItem.jsx";
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import React, {useEffect, useRef, useState} from "react";
-import {useCategory} from "../../Context/index.js";
+import {useCategory, useProduct} from "../../Context/index.js";
 import AddCategoryModal from "../Modals/AddCategoryModal.jsx";
 import EditCategoryModal from "../Modals/EditCategoryModal.jsx";
 
@@ -16,8 +16,9 @@ const CategoryList = () => {
     const [selectedCategory, setSelectedCategory] = useState(null)
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-    const {categories} = useCategory()
+    const {categories, categoryDispatch} = useCategory()
 
+    const {productDispatch} = useProduct()
 
     const swiperRef = useRef()
 
@@ -56,6 +57,17 @@ const CategoryList = () => {
             swiperRef.current.swiper.on('breakpoint', updateNavigationVisibility)
         }
     }, [categories]);
+
+    useEffect(() => {
+        categoryDispatch({
+            type: "SELECTED_CATEGORY",
+            value: selectedCategory
+        })
+        productDispatch({
+            type: "CHANGE_PRODUCTS",
+            id: selectedCategory
+        })
+    }, [selectedCategory])
 
     return (
         <div className="category-list relative">
@@ -99,16 +111,16 @@ const CategoryList = () => {
                     </SwiperSlide>
 
                     <SwiperSlide>
-                        <CategoryItem type="edit" active={selectedCategory} setIsEditModalOpen={setIsEditModalOpen} />
+                        <CategoryItem type="edit" setIsEditModalOpen={setIsEditModalOpen} />
                     </SwiperSlide>
 
                     <SwiperSlide>
-                        <CategoryItem type="all" />
+                        <CategoryItem type="all" active={selectedCategory} setSelectedCategory={setSelectedCategory} />
                     </SwiperSlide>
 
                     {categories.map((category) => (
-                        <SwiperSlide key={category.id}>
-                            <CategoryItem type="categoryItem" category={category} />
+                        <SwiperSlide key={category._id}>
+                            <CategoryItem type="categoryItem" active={selectedCategory} setSelectedCategory={setSelectedCategory} category={category} />
                         </SwiperSlide>
                     ))}
 

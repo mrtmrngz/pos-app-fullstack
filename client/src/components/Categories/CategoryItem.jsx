@@ -4,27 +4,40 @@ import {memo} from 'react'
 import {useNavigate} from "react-router-dom";
 
 
-const CategoryItem = ({type, active, category, setIsAddModalOpen, setIsEditModalOpen}) => {
+const CategoryItem = ({type, active, category, setIsAddModalOpen, setIsEditModalOpen, setSelectedCategory}) => {
 
 
     if (type === "categoryItem") {
         return (
-            <div className="category-item flex flex-col items-center justify-between cursor-pointer">
-                <div className="category-img w-16 h-16 flex items-center justify-center rounded-full border-4 border-soft-gray transition-all overflow-hidden">
-                    <img
-                        className="w-full h-full object-cover object-center rounded-full"
-                        src={category.imageUrl}
-                        alt=""/>
-                </div>
+            <div onClick={() => setSelectedCategory(category._id)} className="category-item flex flex-col items-center justify-between cursor-pointer">
+                {category.imageUrl !== "" && (
+                    <div
+                        className={`category-img w-16 h-16 flex items-center justify-center rounded-full border-4 border-soft-gray transition-all overflow-hidden ${active === category._id ? "!border-orange-color" : ""}`}>
+                        <img
+                            className="w-full h-full object-cover object-center rounded-full"
+                            src={category?.imageUrl}
+                            alt=""/>
+                    </div>
+                )}
+
+                {(category.imageUrl === "" && category.color !== "") && (
+                    <div
+                        className={`category-img w-16 h-16 flex items-center justify-center rounded-full border-4 border-soft-gray transition-all overflow-hidden ${active === category._id ? "!border-orange-color" : ""}`} style={{background: `#${category?.color}`}}>
+                        <span className="text-white text-[9px] text-center">{category?.title}</span>
+                    </div>
+                )}
                 <div className="info">
-                    <span>{category.title}</span>
+                    <span>{category?.title}</span>
                 </div>
             </div>
         );
-    } else if(type === "all") {
+    } else if (type === "all") {
         return (
-            <div className={`category-item flex flex-col items-center justify-between cursor-pointer ${!active && "active"}`}>
-                <div className="category-img w-16 h-16 flex items-center justify-center rounded-full border-4 border-soft-gray transition-all overflow-hidden">
+            <div
+                onClick={() => setSelectedCategory(null)}
+                className={`category-item flex flex-col items-center justify-between cursor-pointer ${!active ? "active" : ""}`}>
+                <div
+                    className="category-img w-16 h-16 flex items-center justify-center rounded-full border-4 border-soft-gray transition-all overflow-hidden">
                     <img
                         className="w-full h-full object-cover object-center rounded-full"
                         src="https://plus.unsplash.com/premium_photo-1683887064106-531532ecdf20?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZHVjdHN8ZW58MHx8MHx8fDA%3D"

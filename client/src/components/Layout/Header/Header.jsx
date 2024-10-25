@@ -3,11 +3,25 @@ import {Link, useLocation, useNavigate} from "react-router-dom";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
 import HeaderRight from "./HeaderRight.jsx";
+import {useState} from "react";
+import {useProduct} from "../../../Context/index.js";
 
 const Header = () => {
+    const [search, setSearch] = useState("")
 
     const {path} = useLocation()
     const navigate = useNavigate()
+    const {productDispatch, searchValue} = useProduct()
+
+    const handleChange = (e) => {
+        const value = (e.target.value).trim()
+        setSearch(value)
+        productDispatch({
+            type: "SEARCH_PRODUCTS",
+            value: value.toLocaleLowerCase('tr')
+        })
+    }
+
 
     return (
         <header className="h-20 border-b border-border-color w-full bg-white">
@@ -23,7 +37,7 @@ const Header = () => {
                         path !== "/" && navigate("/")
                     }}>
                         <CiSearch size={20} className="bg-slate-100" />
-                        <input type="text" className="max-w-full w-full bg-transparent border-none py-2 text-sm" placeholder="Search..." />
+                        <input onChange={handleChange} value={search} type="text" className="max-w-full w-full bg-transparent border-none py-2 text-sm" placeholder="Search..." />
                     </div>
                     <HeaderRight />
                 </div>
