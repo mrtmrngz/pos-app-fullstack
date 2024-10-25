@@ -54,7 +54,7 @@ exports.login = async (req, res) => {
             secure: true,
             maxAge: age
         }).status(200).json({
-            id: user._id,
+            _id: user._id,
             email: user.email
         })
 
