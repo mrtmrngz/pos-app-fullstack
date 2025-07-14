@@ -161,9 +161,6 @@ Contributions are welcome! To contribute:
 
 Please follow the project's coding standards and include relevant tests.
 
-## 📜 License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
 ## 📬 Contact
 For questions or feedback, reach out to [mrtmrngz](https://github.com/mrtmrngz) or email [mert00marangoz@gmail.com](mailto:mert00marangoz@gmail.com).
 
